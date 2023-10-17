@@ -1,0 +1,95 @@
+{
+	"name": "roots/bedrock",
+	"type": "project",
+	"license": "MIT",
+	"description": "WordPress boilerplate with Composer, easier configuration, and an improved folder structure",
+	"homepage": "https://roots.io/bedrock/",
+	"authors": [
+		{
+			"name": "Scott Walkinshaw",
+			"email": "scott.walkinshaw@gmail.com",
+			"homepage": "https://github.com/swalkinshaw"
+		},
+		{
+			"name": "Ben Word",
+			"email": "ben@benword.com",
+			"homepage": "https://github.com/retlehs"
+		}
+	],
+	"keywords": [
+		"bedrock",
+		"composer",
+		"roots",
+		"wordpress",
+		"wp",
+		"wp-config"
+	],
+	"support": {
+		"issues": "https://github.com/roots/bedrock/issues",
+		"forum": "https://discourse.roots.io/category/bedrock"
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://wpackagist.org",
+			"only": [
+				"wpackagist-plugin/*",
+				"wpackagist-theme/*"
+			]
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/BeAPI/bea-fix-loco-translate"
+		}
+	],
+	"require": {
+		"roots/acorn": "^2.1"
+	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.7.1",
+		"roave/security-advisories": "dev-latest"
+	},
+	"post-autoload-dump": [
+		"Roots\\Acorn\\ComposerScripts::postAutoloadDump"
+	],
+	"config": {
+		"optimize-autoloader": true,
+		"preferred-install": "dist",
+		"allow-plugins": {
+			"composer/installers": true,
+			"roots/wordpress-core-installer": true
+		}
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"extra": {
+		"installer-paths": {
+			"web/app/mu-plugins/{$name}/": [
+				"type:wordpress-muplugin"
+			],
+			"web/app/plugins/{$name}/": [
+				"type:wordpress-plugin"
+			],
+			"web/app/themes/{$name}/": [
+				"type:wordpress-theme"
+			]
+		},
+		"wordpress-install-dir": "web/wp"
+	},
+	"scripts": {
+		"post-root-package-install": [
+			"php -r \"copy('.env.example', '.env');\""
+		],
+		"build-app": [
+			"echo \"\\033[0;34m>> Executing composer script 'build-sage'\\033[0m\"",
+			"THEME_NAME=$(grep WP_DEFAULT_THEME .env | cut -d '=' -f2) && cd web/app/themes/$THEME_NAME && composer install",
+			"THEME_NAME=$(grep WP_DEFAULT_THEME .env | cut -d '=' -f2) && cd web/app/themes/$THEME_NAME && yarn cache clean && yarn && yarn build"
+		],
+		"build-languages": [
+			"bash scripts/update-languages.sh"
+		],
+		"test": [
+			"echo \"\\033[0;34m>> Executing phpcs -d memory_limit=2048M\\033[0m\""
+		]
+	}
+}
